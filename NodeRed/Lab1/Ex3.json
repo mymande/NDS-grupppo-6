@@ -1,0 +1,170 @@
+[
+    {
+        "id": "e06805297e78950e",
+        "type": "tab",
+        "label": "Exercise 0",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "20f9b5c22a82e2f1",
+        "type": "inject",
+        "z": "e06805297e78950e",
+        "name": "Hello World!",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "cc",
+                "v": "federico1.mandelli@mail.polimi.it",
+                "vt": "str"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            },
+            {
+                "p": "to",
+                "v": "pasquale.scalise@mail.polimi.it",
+                "vt": "str"
+            },
+            {
+                "p": "timestamp",
+                "v": "",
+                "vt": "date"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "mail",
+        "payload": "Hello word",
+        "payloadType": "str",
+        "x": 200,
+        "y": 420,
+        "wires": [
+            [
+                "0779103caa39cbdd"
+            ]
+        ]
+    },
+    {
+        "id": "24380507a326038a",
+        "type": "debug",
+        "z": "e06805297e78950e",
+        "name": "Print Msg!",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "d1709360c2819826",
+        "type": "e-mail",
+        "z": "e06805297e78950e",
+        "server": "smtps.aruba.it",
+        "port": "465",
+        "authtype": "BASIC",
+        "saslformat": false,
+        "token": "",
+        "secure": true,
+        "tls": true,
+        "name": "",
+        "dname": "Send Mail!",
+        "x": 1070,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "0779103caa39cbdd",
+        "type": "function",
+        "z": "e06805297e78950e",
+        "name": "Invert",
+        "func": "let to = msg.to\nmsg.to = msg.cc\nmsg.cc = to\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 420,
+        "wires": [
+            [
+                "5dba011a350b63d8"
+            ]
+        ]
+    },
+    {
+        "id": "5dba011a350b63d8",
+        "type": "function",
+        "z": "e06805297e78950e",
+        "name": "To in context",
+        "func": "msg.payload = msg.payload + \" \" + msg.to\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 420,
+        "wires": [
+            [
+                "8d2931a502a753e7"
+            ]
+        ]
+    },
+    {
+        "id": "c89aefe22fc29147",
+        "type": "function",
+        "z": "e06805297e78950e",
+        "name": "CheckTimestamp",
+        "func": "if (msg.timestamp % 2 == 0)\n{\n    return [null,msg];\n} else{\n    return [msg,null];\n}",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 890,
+        "y": 420,
+        "wires": [
+            [
+                "24380507a326038a"
+            ],
+            [
+                "d1709360c2819826"
+            ]
+        ]
+    },
+    {
+        "id": "8d2931a502a753e7",
+        "type": "function",
+        "z": "e06805297e78950e",
+        "name": "Timestamp",
+        "func": "if(!context.get(\"timestamps\")){\n    context.set(\"timestamps\",[0,0,0]);\n}\nlet temp = context.get(\"timestamps\");\ntemp.push(msg.timestamp);\ntemp.shift();\ncontext.set(\"timestamps\",temp);\nmsg.payload += temp;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 420,
+        "wires": [
+            [
+                "c89aefe22fc29147"
+            ]
+        ]
+    }
+]
