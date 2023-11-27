@@ -1,0 +1,113 @@
+[
+    {
+        "id": "d6c66b60e07a7192",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "1d16e9aba2065a3a",
+        "type": "inject",
+        "z": "d6c66b60e07a7192",
+        "name": "trigger OW API",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "60",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 260,
+        "y": 220,
+        "wires": [
+            [
+                "a9145a81d8d00778"
+            ]
+        ]
+    },
+    {
+        "id": "a9145a81d8d00778",
+        "type": "openweathermap",
+        "z": "d6c66b60e07a7192",
+        "name": "GetMilanWeather",
+        "wtype": "current",
+        "lon": "",
+        "lat": "",
+        "city": "Milan",
+        "country": "IT",
+        "language": "en",
+        "x": 510,
+        "y": 220,
+        "wires": [
+            [
+                "892ad732836fb7f4",
+                "3377d02cf815a852"
+            ]
+        ]
+    },
+    {
+        "id": "892ad732836fb7f4",
+        "type": "debug",
+        "z": "d6c66b60e07a7192",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "420e040c9dab88be",
+        "type": "file",
+        "z": "d6c66b60e07a7192",
+        "name": "",
+        "filename": "/tmp/temperature1",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 850,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3377d02cf815a852",
+        "type": "function",
+        "z": "d6c66b60e07a7192",
+        "name": "function 1",
+        "func": "let temp = msg.data.main.temp;\ntemp = temp - 273.15;\nmsg.payload = temp;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 380,
+        "wires": [
+            [
+                "420e040c9dab88be"
+            ]
+        ]
+    }
+]

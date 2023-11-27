@@ -1,0 +1,208 @@
+[
+    {
+        "id": "0f878789f06582b5",
+        "type": "tab",
+        "label": "UDP Echo Server",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "033b0d4a0ead8e4c",
+        "type": "udp in",
+        "z": "0f878789f06582b5",
+        "name": "Receive",
+        "iface": "",
+        "port": "7779",
+        "ipv": "udp4",
+        "multicast": "false",
+        "group": "",
+        "datatype": "utf8",
+        "x": 165,
+        "y": 296,
+        "wires": [
+            [
+                "b34b7b8b0c154992",
+                "dacfc3fc95871e3e"
+            ]
+        ]
+    },
+    {
+        "id": "dacfc3fc95871e3e",
+        "type": "delay",
+        "z": "0f878789f06582b5",
+        "name": "Wait 1 sec",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 400,
+        "y": 425,
+        "wires": [
+            [
+                "39af92ca7c377594"
+            ]
+        ]
+    },
+    {
+        "id": "39af92ca7c377594",
+        "type": "udp out",
+        "z": "0f878789f06582b5",
+        "name": "Send Back",
+        "addr": "",
+        "iface": "",
+        "port": "5555",
+        "ipv": "udp4",
+        "outport": "",
+        "base64": false,
+        "multicast": "false",
+        "x": 691,
+        "y": 286,
+        "wires": []
+    },
+    {
+        "id": "b34b7b8b0c154992",
+        "type": "debug",
+        "z": "0f878789f06582b5",
+        "name": "Dump Msg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 566,
+        "y": 197,
+        "wires": []
+    },
+    {
+        "id": "0489d3f290e14762",
+        "type": "inject",
+        "z": "0f878789f06582b5",
+        "name": "trigger OW API",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "60",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 700,
+        "wires": [
+            [
+                "4fe26b6d34fcca5c"
+            ]
+        ]
+    },
+    {
+        "id": "4fe26b6d34fcca5c",
+        "type": "openweathermap",
+        "z": "0f878789f06582b5",
+        "name": "GetMilanWeather",
+        "wtype": "current",
+        "lon": "",
+        "lat": "",
+        "city": "Milan",
+        "country": "IT",
+        "language": "en",
+        "x": 410,
+        "y": 700,
+        "wires": [
+            [
+                "431c844de948a827"
+            ]
+        ]
+    },
+    {
+        "id": "4ab6f2979cf8e7a6",
+        "type": "debug",
+        "z": "0f878789f06582b5",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "431c844de948a827",
+        "type": "function",
+        "z": "0f878789f06582b5",
+        "name": "function 2",
+        "func": "let temp = msg.data.main.temp;\ntemp = temp - 273.15;\nmsg.payload = \"The temperature in Milan is \" + temp;\nmsg.ip = \"127.0.0.1\";\nmsg.port = 7779;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 860,
+        "wires": [
+            [
+                "c986c1fd9a167cd5"
+            ]
+        ]
+    },
+    {
+        "id": "c986c1fd9a167cd5",
+        "type": "udp out",
+        "z": "0f878789f06582b5",
+        "name": "",
+        "addr": "",
+        "iface": "",
+        "port": "",
+        "ipv": "udp4",
+        "outport": "",
+        "base64": false,
+        "multicast": "false",
+        "x": 750,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "2ef34dc0f7682e44",
+        "type": "udp in",
+        "z": "0f878789f06582b5",
+        "name": "",
+        "iface": "",
+        "port": "5555",
+        "ipv": "udp4",
+        "multicast": "false",
+        "group": "",
+        "datatype": "utf8",
+        "x": 420,
+        "y": 940,
+        "wires": [
+            [
+                "4ab6f2979cf8e7a6"
+            ]
+        ]
+    }
+]

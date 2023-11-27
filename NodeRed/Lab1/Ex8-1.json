@@ -1,0 +1,27 @@
+[
+    {
+        "id": "ae42b865aecb52b5",
+        "type": "function",
+        "z": "0f878789f06582b5",
+        "name": "Compute Answer",
+        "func": "delete msg.ts;\ndelete msg.transport;\nmsg.payload.inbound = false;\nmsg.payload.fallback = null;\nmsg.tg = msg.payload;\nmsg.location = { };\nif (msg.payload.content==\"What's your name?\") {\n    msg.payload.content = \"I am the NSDS Telegram Bot!\";\n    return [msg, null];\n} else if(msg.payload.content==\"What is the temperature in Milan?\") {\n    msg.location.city = \"Milan\";\n} else if(msg.payload.content==\"What is the temperature in Rome?\") {\n        msg.location.city = \"Rome\";\n} else {\n    msg.payload.content = \"i don't understand what you're trying to tell me :())\";\n    return [msg, null];\n}\n\nmsg.location.country = \"IT\";\n\nreturn [null, msg];",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 290,
+        "y": 260,
+        "wires": [
+            [
+                "479846ca84a0d730",
+                "5184967ff9bf82a8"
+            ],
+            [
+                "67b8ecf6c5c23e74",
+                "5184967ff9bf82a8"
+            ]
+        ]
+    }
+]

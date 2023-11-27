@@ -1,0 +1,32 @@
+[
+    {
+        "id": "1d16e9aba2065a3a",
+        "type": "inject",
+        "z": "d6c66b60e07a7192",
+        "name": "trigger OW API",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "60",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 260,
+        "y": 220,
+        "wires": [
+            [
+                "a9145a81d8d00778",
+                "f9c2bf9288218041"
+            ]
+        ]
+    }
+]
