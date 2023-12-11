@@ -1,0 +1,266 @@
+[
+    {
+        "id": "bc6934a43ceea143",
+        "type": "tab",
+        "label": "Exercise 8-1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "ce8ad9f8685eedaf",
+        "type": "chatbot-telegram-receive",
+        "z": "bc6934a43ceea143",
+        "bot": "e145681d1fc7e143",
+        "botProduction": "",
+        "x": 210,
+        "y": 120,
+        "wires": [
+            [
+                "7f07771a4e1d8a23"
+            ]
+        ]
+    },
+    {
+        "id": "037923d9eebaadbc",
+        "type": "debug",
+        "z": "bc6934a43ceea143",
+        "name": "Show Incoming Msg!",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 920,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "7f07771a4e1d8a23",
+        "type": "function",
+        "z": "bc6934a43ceea143",
+        "name": "Compute Wind/Weather",
+        "func": "msg.payload.content = msg.payload.content.toLowerCase();\n\nif (msg.payload.content.startsWith(\"what will the weather be in\")) {\n    msg.type = \"weather\";\n    msg.payload.content = msg.payload.content.replace(\"what will the weather be in \", \"\");\n    return [ msg, null ];\n} else if (msg.payload.content.startsWith(\"what will the wind be in\")) {\n    msg.type = \"wind\";\n    msg.payload.content = msg.payload.content.replace(\"what will the wind be in \", \"\");\n    return [ msg, null ];\n} else {\n    msg.payload.content = \"i don't understand what you're saying\";\n    return [null, msg ];\n}\n",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nflow.set(\"counterWind\", 0);\nflow.set(\"counterWeather\", 0);",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 120,
+        "wires": [
+            [
+                "a79555facdcb05ab"
+            ],
+            [
+                "c85c45fa8353ee7c"
+            ]
+        ]
+    },
+    {
+        "id": "f0af7cf05572cafc",
+        "type": "openweathermap",
+        "z": "bc6934a43ceea143",
+        "name": "Weather",
+        "wtype": "forecast",
+        "lon": "",
+        "lat": "",
+        "city": "",
+        "country": "",
+        "language": "en",
+        "x": 580,
+        "y": 260,
+        "wires": [
+            [
+                "afe9a6b7ac7c1efb"
+            ]
+        ]
+    },
+    {
+        "id": "d2515cc106c9e00c",
+        "type": "chatbot-message",
+        "z": "bc6934a43ceea143",
+        "name": "Compose Message",
+        "message": [
+            {
+                "message": "{{payload.response}}"
+            }
+        ],
+        "language": "none",
+        "x": 1070,
+        "y": 240,
+        "wires": [
+            [
+                "c85c45fa8353ee7c"
+            ]
+        ]
+    },
+    {
+        "id": "a79555facdcb05ab",
+        "type": "function",
+        "z": "bc6934a43ceea143",
+        "name": "Compute City",
+        "func": "msg.location = {};\nif (msg.payload.content.startsWith(\"rome\")) {\n    msg.location.city = \"Rome\";\n    msg.location.country = \"IT\";\n    msg.payload.content = msg.payload.content.replace(\"rome \", \"\");\n    return [ msg, null ];\n} else if (msg.payload.content.startsWith(\"milan\")) {\n    msg.location.city = \"Milan\";\n    msg.location.country = \"IT\";\n    msg.payload.content = msg.payload.content.replace(\"milan \", \"\");\n    return [ msg, null ];\n} else {\n    msg.payload.content = \"i don't understand what you're saying\";\n    return [null, msg ];\n}\n",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 180,
+        "y": 280,
+        "wires": [
+            [
+                "093e62234aab1bac"
+            ],
+            [
+                "c85c45fa8353ee7c"
+            ]
+        ]
+    },
+    {
+        "id": "093e62234aab1bac",
+        "type": "function",
+        "z": "bc6934a43ceea143",
+        "name": "Compute Day",
+        "func": "if (msg.payload.content.startsWith(\"tomorrow\")) {\n    msg.date = 1;\n} else if (msg.payload.content.startsWith(\"in two days\")) {\n    msg.date = 2;\n} else {\n    msg.payload.content = \"i don't understand what you're saying\";\n    return [null, msg ];\n}\n\nif (msg.type == \"weather\") {\n    flow.set(\"counterWeather\", flow.get(\"counterWeather\")+1);\n} else {\n    flow.set(\"counterWind\", flow.get(\"counterWind\")+1);\n}\n\nreturn [ msg, null ];",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 260,
+        "wires": [
+            [
+                "f0af7cf05572cafc"
+            ],
+            [
+                "c85c45fa8353ee7c"
+            ]
+        ]
+    },
+    {
+        "id": "afe9a6b7ac7c1efb",
+        "type": "function",
+        "z": "bc6934a43ceea143",
+        "name": "Compute Response",
+        "func": "let id = msg.date*8;\nlet response = \"\";\n\nif (msg.date == 1) {\n    response = \"Tomorrow\";\n} else if (msg.date == 2) {\n    response = \"In two days\";\n}\n\nresponse += ` in ${msg.location.city}`;\n\nlet forecast;\nif (msg.type == \"weather\") {\n    forecast = msg.payload[id].weather[0].description;\n    response += ` the weather forecast will be ${forecast}`;\n} else if (msg.type == \"wind\") {\n    forecast = msg.payload[id].wind.speed;\n    response += ` the wind forecast will be ${forecast}`;\n}\n\nlet key = msg.date + msg.location.city + msg.type;\nif(!context.get(key)) {\n    context.set(key, forecast);\n    response += \", it's the first time they ask me this\";\n} else {\n    if (context.get(key) != forecast) {\n        response += \", it has changed since my last request\";\n        context.set(key, forecast);\n    } else {\n        response += \", it's the same since my last request\";\n    }\n}\n\nmsg.payload = {}\nmsg.payload.response = response;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 240,
+        "wires": [
+            [
+                "037923d9eebaadbc",
+                "d2515cc106c9e00c"
+            ]
+        ]
+    },
+    {
+        "id": "c85c45fa8353ee7c",
+        "type": "chatbot-telegram-send",
+        "z": "bc6934a43ceea143",
+        "bot": "e145681d1fc7e143",
+        "botProduction": "",
+        "track": false,
+        "passThrough": false,
+        "errorOutput": false,
+        "outputs": 0,
+        "x": 890,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "3b70931d92f097a4",
+        "type": "file",
+        "z": "bc6934a43ceea143",
+        "name": "Write counters to file",
+        "filename": "/tmp/counter",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 680,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ed26a08fb0c55b0a",
+        "type": "inject",
+        "z": "bc6934a43ceea143",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 540,
+        "wires": [
+            [
+                "2217be87242ae715"
+            ]
+        ]
+    },
+    {
+        "id": "2217be87242ae715",
+        "type": "function",
+        "z": "bc6934a43ceea143",
+        "name": "Get counters",
+        "func": "msg.payload = flow.get(\"counterWeather\") + \" \" + flow.get(\"counterWind\");\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 540,
+        "wires": [
+            [
+                "3b70931d92f097a4"
+            ]
+        ]
+    },
+    {
+        "id": "e145681d1fc7e143",
+        "type": "chatbot-telegram-node",
+        "botname": "Node-RED Lab",
+        "usernames": "",
+        "polling": "1000",
+        "store": "",
+        "log": "",
+        "debug": false,
+        "skipMediaFiles": false,
+        "webHook": "",
+        "connectMode": "polling",
+        "storeMessages": true,
+        "enableMissionControl": false,
+        "inspectMessages": true,
+        "chatbotId": ""
+    }
+]
